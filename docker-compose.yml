@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: node-playground-api
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+      target: development
+    volumes:
+      - ./src:/usr/src/app:delegated
+    ports:
+      - 9000:3000
+    environment:
+      TZ: "Asia/Tokyo"
+    # entrypoint: ["dockerize", "--timeout", "20s", "--wait", "tcp://db:3306"]
+    # command: sh -c "npx prisma migrate dev && npx prisma generate && npm run start:dev"
+    restart: always
+    networks:
+      node-playground-net:
+        ipv4_address: 172.87.5.2
+
+volumes:
+  node-playground-mysql-db:
+    driver: local
+
+networks:
+  node-playground-net:
+    name: node-playground-net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.87.5.0/24
